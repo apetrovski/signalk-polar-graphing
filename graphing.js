@@ -121,8 +121,7 @@ $(function () {
           setTimeout(function () {
            chart.setTitle({
              // align: 'left',
-          // text: vesselName + ' live polar chart'
-	     text: windSpeed
+           text: vesselName + ' live polar chart'
            });
 
             console.log("max index: " + tableIndexMax)
@@ -255,7 +254,7 @@ $(function () {
 
           setInterval(function () {
 	   // var slider = document.getElementById("myRange");
-           var subTitle ="Wind speed: "+ getWind().toFixed(2*1.9438)+' +/-'+windRange+' kn';
+           var subTitle ="Wind speed: "+ getWind().toFixed(2)+' +/- '+windRange.toFixed(1)+' kn';
 	   // var subTitle ='blah'+ slider.value+'tada' ;
 	  
            // (async() => {
@@ -265,7 +264,7 @@ $(function () {
 			function(myJson){
 		          var engineOn = false;
 			  for(var engine in myJson){
-		               console.log(myJson[engine].revolutions.value)
+		              // console.log(myJson[engine].revolutions.value)
 				if (myJson[engine].revolutions.value > 0){
 					engineOn = true;
 					break;
@@ -379,7 +378,7 @@ $(function () {
     legend: {
       verticalAlign: "top",
       layout: "horizontal",
-      fontSize: "24px"
+      fontSize: 24
     },
 
     pane: {
