@@ -1,0 +1,13 @@
+.input-range {
+    -webkit-appearance: none;
+    height: 80%;
+    border-radius: 5px;
+    background: #ccc;
+    outline: none;
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+    }
+#container {
+    height: 100%;	
+    
+}    
