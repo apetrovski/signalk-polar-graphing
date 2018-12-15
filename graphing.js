@@ -194,7 +194,60 @@ $(function () {
               });
             })();
           }, 1000);*/
+          setInterval(function () {
 
+            chart = $('#container').highcharts();
+            (async() => {
+              try {
+               // var response = await fetch("/signalk/v1/aipi/vessels/self/performance/beatAngle");
+                var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
+	        var x = await response.json();
+                x = JSON.stringify(x.value)
+                tackAngle =(x/Math.PI*180);
+
+              //  response = await fetch("/signalk/v1/api/vessels/self/performance/gybeAngle");
+              //  var y = await JSON.stringify(response.json().value);
+              //  y = JSON.stringify(y.value);
+              //  reachAngle = (y/Math.PI*180);
+
+              } catch (e) {
+                console.log("Error fetching beat and gybe angles")
+              }
+
+              chart.xAxis[0].removePlotLine('tack');
+              chart.xAxis[0].removePlotLine('reach');
+              chart.xAxis[0].addPlotLine({
+                color: 'red', // Color value
+                dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
+                value: tackAngle,//getTarget().Tack, // Value of where the line will appear
+                width: 2, // Width of the line
+                id: 'tack',
+               /* label: {
+                  text: 'Target tack '+tackAngle.toFixed(2)+ '°',
+                  verticalAlign: 'center',
+                  textAlign: 'right',
+                  rotation: 90,//rotation: tackAngle-90,
+                  //y: 12,
+                  x: 0//120
+                }*/
+              });
+              chart.xAxis[0].addPlotLine({
+                color: 'red', // Color value
+                dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
+                value: reachAngle,//getTarget().Tack, // Value of where the line will appear
+                width: 2, // Width of the line
+                id: 'reach',
+                label: {
+                  text: 'Target reach '+parseFloat(reachAngle).toFixed(2)+ '°',
+                  verticalAlign: 'right',
+                  textAlign: 'top',
+                  rotation: 90,//rotation: reachAngle-90,
+                  //y: 12,
+                  x: 0//20
+                }
+              });
+            })();
+          }, 1000);
           // set up the updating of the chart each second
 
           var series = this.series[tableIndexMax + 1];
@@ -205,9 +258,31 @@ $(function () {
            var subTitle ="Wind speed: "+ getWind().toFixed(2*1.9438)+' +/-'+windRange+' kn';
 	   // var subTitle ='blah'+ slider.value+'tada' ;
 	  
-         //  alert(subTitle);
-           chart.setTitle(null, {text: subTitle});
-
+           // (async() => {
+              try {
+                fetch("/signalk/v1/api/vessels/self/propulsion").then(
+			function(response){return (response.json());}).then(
+			function(myJson){
+		          var engineOn = false;
+			  for(var engine in myJson){
+		               console.log(myJson[engine].revolutions.value)
+				if (myJson[engine].revolutions.value > 0){
+					engineOn = true;
+					break;
+				}
+			  }
+			  if(engineOn){
+                       		 subTitle = subTitle + " Motoring"
+                          }else{
+				 subTitle = subTitle + " Sailing" 
+                          }
+				chart.setTitle(null, {text: subTitle});
+			});
+		
+              } catch (e) {
+                console.log(e)
+               };
+           // });
             (async() => {
               try {
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
@@ -225,9 +300,9 @@ $(function () {
 	      } catch (e) {
                 console.log("Error fetching wind angle and boat speed")
 	       };
-	      	      
-            });
-          }, 1000);
+
+	    });
+	}, 1000);
            
   
 	  //update current polar each second
@@ -303,7 +378,8 @@ $(function () {
 
     legend: {
       verticalAlign: "top",
-      layout: "horizontal"
+      layout: "horizontal",
+      fontSize: "24px"
     },
 
     pane: {
@@ -321,7 +397,7 @@ $(function () {
           return this.value + '°';
         }
       },
-    /* plotLines: [{
+    /*plotLines: [{
         color: 'red', // Color value
         dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
         value: y,//getTarget().Tack, // Value of where the line will appear
@@ -391,36 +467,42 @@ $(function () {
       name: polarWind[0],
       data: stbPolar5,
       connectEnds: false,
-      turboThreshold: 0
+      turboThreshold: 0,
+      marker: false,	    
     }, {
       type: 'line',
       name: polarWind[1],
       data: stbPolar10,
-      connectEnds: false,
-      turboThreshold: 0
+      connectEnds:false,
+      turboThreshold: 0,
+      marker: false,	    
     }, {
       type: 'line',
       name: polarWind[2],
       data: stbPolar15,
       connectEnds: false,
-      turboThreshold: 0
+      turboThreshold: 0,
+      marker: false,
     }, {
       type: 'line',
       name: polarWind[3],
       data: stbPolar20,
       connectEnds: false,
-      turboThreshold: 0
+      turboThreshold: 0,
+      marker: false,
     }, {
       type: 'line',
       name: polarWind[4],
       connectEnds: false,
-      turboThreshold: 0
+      turboThreshold: 0,
+      marker: false,
     }, {
       type: 'line',
       name: polarWind[5],
       data: stbPolar30,
       connectEnds: false,
-      turboThreshold: 0
+      turboThreshold: 0,
+      marker: false,	    
     },{
       type: 'scatter',
       name: 'Current performance',
