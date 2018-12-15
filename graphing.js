@@ -1,3 +1,4 @@
+//console.log = function(){}
 var tableIndexMax = 2 //should start as 2, port, starboard and combined already hard-coded
 const tableData = {}
 var vesselName
@@ -57,14 +58,20 @@ function getTables(err, response){ // get user entered polars
 //to be updated once every second?:
 var current = [];
 //updated only on refresh:
-var portPolar = [];
 var stbPolar = [];
-var polarCombined = [];
+var polarWind=[1,2,3,4,5,6];
+var stbPolar5 = [];
+var stbPolar10 = [];
+var stbPolar15 = [];
+var stbPolar20 = [];
+var stbPolar25 = [];
+var stbPolar30 = [];
+var polar1=[];
+var tackAngle;
+var reachAngle;
 
-var tackAngle
-var reachAngle
 
-var windSpeed = 5.8;
+var windSpeed = 5;
 var windRange = 0.2;
 
 var nightmode = false;
@@ -72,19 +79,22 @@ var nightmode = false;
 function getWind() {
   (async() => {
     try {
-      var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/speedOverGround");
+      var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/speedApparent");
       windSpeedTemp = await response.json();
       windSpeed = parseFloat(JSON.parse(windSpeedTemp.value))
-      console.log("wind speed: " + windSpeed)
+     // console.log("wind speed: " + windSpeed*1.9438 )
     } catch (e) {
       console.log("Error fetching wind speed")
     }
   })()
-  return windSpeed;
+  return windSpeed*1.9438;
 };
 
 
+
 $(function () {
+ 
+ 
 
   Highcharts.setOptions({
     global : {
@@ -109,10 +119,11 @@ $(function () {
           var userTables = getTables()
           vesselName = getVesselName()
           setTimeout(function () {
-            chart.setTitle({
-              align: 'left',
-              text: vesselName + ' live polar chart'
-            });
+           chart.setTitle({
+             // align: 'left',
+          // text: vesselName + ' live polar chart'
+	     text: windSpeed
+           });
 
             console.log("max index: " + tableIndexMax)
             console.log("tableData: " + JSON.stringify(userTables, null, 4));
@@ -130,7 +141,7 @@ $(function () {
           }, 500)
 
           // set up the updating of the plotlines each second
-          setInterval(function () {
+         /* setInterval(function () {
 
             chart = $('#container').highcharts();
             (async() => {
@@ -173,7 +184,7 @@ $(function () {
                 width: 2, // Width of the line
                 id: 'reach',
                 label: {
-                  text: 'Target reach '+reachAngle.toFixed(2)+ '°',
+                  text: 'Target reach '+Math.round(reachAngle)+ '°',
                   verticalAlign: 'right',
                   textAlign: 'top',
                   rotation: 90,//rotation: reachAngle-90,
@@ -182,7 +193,7 @@ $(function () {
                 }
               });
             })();
-          }, 1000);
+          }, 1000);*/
 
           // set up the updating of the chart each second
 
@@ -190,13 +201,16 @@ $(function () {
           var seriess = this.series;
 
           setInterval(function () {
-            var subTitle = getWind().toFixed(2)+' +/-'+windRange+' m/s';
-            //alert(subTitle);
-            chart.setTitle(null, {text: subTitle});
+	   // var slider = document.getElementById("myRange");
+           var subTitle ="Wind speed: "+ getWind().toFixed(2*1.9438)+' +/-'+windRange+' kn';
+	   // var subTitle ='blah'+ slider.value+'tada' ;
+	  
+         //  alert(subTitle);
+           chart.setTitle(null, {text: subTitle});
 
             (async() => {
               try {
-                var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleTrueGround");
+                var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
                 var x = await response.json();
                 x = JSON.stringify(x.value);
                 var xDegAbs = Math.abs(x/Math.PI*180);
@@ -204,113 +218,136 @@ $(function () {
                 var y = await response.json();
                 y = JSON.stringify(y.value);
                 var yKnots = y/1852*3600;
-                console.log(xDegAbs + " " + yKnots);
+                //console.log(xDegAbs + " " + yKnots);
                 series.addPoint([xDegAbs, yKnots], true, true);
-
-              } catch (e) {
+	       
+              
+	      } catch (e) {
                 console.log("Error fetching wind angle and boat speed")
-              }
-            })();
-
-
-          }, 1000);
-
-          //update current polar each second
-          setInterval(function () {
-            var chart = $('#container').highcharts(),
-            options = chart.options;
-            $.getJSON("/plugins/signalk-polar/polarTable/?windspeed=" + windSpeed + "&interval=" + windRange, function (json) {
-              portPolar.length = 0;
-              stbPolar.length = 0;
-              polarCombined.length = 0;
-              json.forEach(function(entry) {
-                if(entry['angle'] > 0){
-                  var windDeg = (entry['angle']/Math.PI*180);
-                  var speedKnots = entry['speed']/1852*3600;
-                  console.log(windDeg + ',' + speedKnots);
-                  var polarItem = [windDeg , speedKnots];
-                  stbPolar.push(polarItem); //positive angles
-                }
-
-                if(entry['angle'] < 0){
-                  var windDeg = (entry['angle']/Math.PI*180);
-                  var speedKnots = entry['speed']/1852*3600;
-                  console.log(windDeg + ',' + speedKnots);
-                  var polarItem = [-windDeg , speedKnots];
-                  portPolar.push(polarItem); //negative angles
-                }
-
-                var windDeg = Math.abs(entry['angle']/Math.PI*180);
-                var speedKnots = entry['speed']/1852*3600;
-                var polarItem = [windDeg , speedKnots];
-                polarCombined.push(polarItem); //combined port and starboard angles
-
-              });
-              chart.series[0].setData(portPolar,true);
-              chart.series[1].setData(stbPolar,true);
-              chart.series[2].setData(polarCombined,true);
-
-              options = chart.options;
+	       };
+	      	      
             });
-
           }, 1000);
+           
+  
+	  //update current polar each second
+	  
+	    function test(windSpeed, seriesStart, stbPolar, polarWindIndex, chart){	
+           //   setInterval(slider1(),1000);
+	  //  setInterval(function  () {
+              //var chart = $('#container').highcharts();
+              options = chart.options;
+              $.getJSON("/plugins/signalk-polar/polarTable/?windspeed=" + windSpeed  + "&interval=" + windRange, function (json) {
+                stbPolar.length = 0;
 
+                json.forEach(function(entry) {
+                  if(entry['angle'] > 0){
+                    var windDeg = (entry['angle'])/Math.PI*180;
+                    var speedKnots = entry['speed']/1852*3600;
+                    //console.log(windDeg + ',' + speedKnots);
+                    var polarItem = [windDeg , speedKnots];
+                    stbPolar.push(polarItem); //positive angles                   
 
+                  }
+
+                  if(entry['angle'] < 0){
+                    var windDeg = (entry['angle']/Math.PI*180);
+                    var speedKnots = entry['speed']/1852*3600;
+                   // console.log(windDeg + ',' + speedKnots);
+                    var polarItem = [windDeg , speedKnots];
+                    stbPolar.push(polarItem); //negative angles
+                    
+                  }
+                  
+                });
+		stbPolar.push([0 , 0])      
+		stbPolar.sort(function(a,b){return a[0] - b[0]; });      
+                chart.series[seriesStart].setData(stbPolar,true);
+                chart.series[seriesStart].setName(polarWind[polarWindIndex],true) 
+                polarWind[polarWindIndex]=windSpeed*1.9438;
+                options = chart.options;
+              });
+		  
+            }
+		
+		//, 1000);
+	 // function test2(){
+	 setInterval(function(){
+	  // var today = new Date(); 
+           var chart = $('#container').highcharts();
+	   var slider = document.getElementById("windMin");
+	   var slider2 = document.getElementById("step");
+          // var slider = $('#myRange')[0];
+	  // chart.setTitle(null, {text: slider.innerHTML +"~"+(today).getSeconds()}); 
+          
+	  test(parseInt(slider.value)/1.9438,0,stbPolar5,0,chart);       
+          test((parseInt(slider2.value)+parseInt(slider.value))/1.9438,1,stbPolar10,1,chart);
+          test((parseInt(slider2.value)*2+parseInt(slider.value))/1.9438,2,stbPolar15,2,chart);
+          test((parseInt(slider2.value)*3+parseInt(slider.value))/1.9438,3,stbPolar20,3,chart);
+          test((parseInt(slider2.value)*4+parseInt(slider.value))/1.9438,4,stbPolar25,4,chart);
+          test((parseInt(slider2.value)*5+parseInt(slider.value))/1.9438,5,stbPolar30,5,chart);
+	  }
+	,1000);
+	var chart = $('#container').highcharts();
+	chart.setSize(
+              $(container).width(),
+              $(container).height(),
+              false
+        );
 
         }
       }
 
-
-
+   
     },
 
     legend: {
-      verticalAlign: "middle",
-      layout: "vertical"
+      verticalAlign: "top",
+      layout: "horizontal"
     },
 
     pane: {
-      center: ["0%", "50%"],
+      center: ["50%", "50%"],
       startAngle: 0,
-      endAngle: 180
+      endAngle: 360
     },
 
     xAxis: {
       tickInterval: 45,
       min: 0,
-      max: 180,
+      max: 360,
       labels: {
         formatter: function () {
           return this.value + '°';
         }
       },
-      plotLines: [{
+    /* plotLines: [{
         color: 'red', // Color value
         dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-        value: tackAngle,//getTarget().Tack, // Value of where the line will appear
+        value: y,//getTarget().Tack, // Value of where the line will appear
         width: 2, // Width of the line
         id: 'tack',
         label: {
-          text: 'Target tack '+tackAngle+ '°',
+          text:'speed through water '+Math.round(y/1.9438) + "kn",
           verticalAlign: 'center',
           textAlign: 'center',
           rotation: tackAngle-90,
           x: 90
         }
       },  {
-        color: 'red', // Color value
+        color: 'blue', // Color value
         dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-        value: reachAngle, // Value of where the line will appear
+        value: x, // Value of where the line will appear
         width: 2, // Width of the line
         id: 'reach', //see http://www.highcharts.com/docs/chart-concepts/plot-bands-and-plot-lines for dynamically updating
         label: {
-          text: 'Target reach '+reachAngle+ '°',
+          text: 'angle apparent '+Math.round( x) + '°',
           verticalAlign: 'right',
           textAlign: 'top',
           rotation: reachAngle-90,
           x: 20
         }
-      }]
+      }]*/
     },
 
     yAxis: {
@@ -347,28 +384,41 @@ $(function () {
         }
       }
     },
-    series: [{
+   	  
+    series: [
+    {
       type: 'line',
-      name: 'Port',
-      color: 'red',
-      data: portPolar,
-      visible: false,
+      name: polarWind[0],
+      data: stbPolar5,
       connectEnds: false,
       turboThreshold: 0
     }, {
       type: 'line',
-      name: 'Starboard',
-      color: 'green',
-      data: stbPolar,
-      visible: false,
+      name: polarWind[1],
+      data: stbPolar10,
       connectEnds: false,
       turboThreshold: 0
-    },{
+    }, {
       type: 'line',
-      name: 'Combined port & stbd',
-      lineWidth: 5,
-      //color: 'blue',
-      data: polarCombined,
+      name: polarWind[2],
+      data: stbPolar15,
+      connectEnds: false,
+      turboThreshold: 0
+    }, {
+      type: 'line',
+      name: polarWind[3],
+      data: stbPolar20,
+      connectEnds: false,
+      turboThreshold: 0
+    }, {
+      type: 'line',
+      name: polarWind[4],
+      connectEnds: false,
+      turboThreshold: 0
+    }, {
+      type: 'line',
+      name: polarWind[5],
+      data: stbPolar30,
       connectEnds: false,
       turboThreshold: 0
     },{
@@ -377,17 +427,56 @@ $(function () {
       color: 'orange',
       data: [current],
     }]
-
-
+   
+   
+   	  
   });
 
   $('#toggle').click(function () {
     var chart = $('#container').highcharts(),
     options = chart.options;
-
     options.chart.polar = !options.chart.polar;
-
+   // options.legend.enabled= !options.legend.enabled;
+    	  
     $('#container').highcharts(options);
   });
 
+
+   var addEvent= function(object, type, callback) {
+    if (object == null || typeof(object) == 'undefined') return;
+    if (object.addEventListener) {
+        object.addEventListener(type, callback, false);
+    } else if (object.attachEvent) {
+        object.attachEvent("on" + type, callback);
+    } else {
+        object["on"+type] = callback;
+    }
+
+  }
+  
+  addEvent($('#container'), "resize", function(event) {
+   // console.log('resized');
+      var chart = $('#container').highcharts();
+      chart.setSize(
+              $(container).width(),
+              $(container).height(),
+              false
+        );
+      chart.height="200%";
+  });
+ 	  
+  
+
+ // $(window).onresize(function()	  
+ // {
+//	  chart.setsize(
+//		$(document).width(),
+//		$(document).height(),
+//		false
+//	  );
+//  });		  
 });
+
+
+
+
