@@ -29,7 +29,7 @@ function getTables(err, response){ // get user entered polars
             const polarArray = [];
             tableData[tableName]= polarArray;
             //console.log("tableData: " + tableData)
-            $.getJSON("/plugins/signalk-polar/polarTable/?windspeed=" + (windSpeed.windSpeed + 0.01) + "&interval=0.1&table=" + table.name, function (combination) {
+            $.getJSON("/plugins/signalk-polar/polarTable/?windspeed=" + windSpeed.windSpeed + "&interval=" + windRange + "&table=" + table.name, function (combination) {
               combination.forEach(function(entry){
                 var windDeg = Math.abs(entry['angle']/Math.PI*180);
                 var speedKnots = entry['speed']/1852*3600;
@@ -72,7 +72,7 @@ var reachAngle;
 
 
 var windSpeed = 5;
-var windRange = 0.2;
+var windRange = 0.2 / 1.9438;
 
 var nightmode = false;
 
