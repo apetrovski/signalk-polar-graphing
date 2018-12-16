@@ -1,7 +1,7 @@
 //console.log = function(){}
 var tableIndexMax = 2 //should start as 2, port, starboard and combined already hard-coded
 const tableData = {}
-var vesselName
+var vesselName;
 
 function getVesselName(){
   (async() => {
@@ -15,7 +15,7 @@ function getVesselName(){
   })()
   return vesselName
 }
-
+getVesselName();
 function getTables(err, response){ // get user entered polars
 
   $.getJSON("/plugins/signalk-polar/listPolarTables", function(json) {
@@ -111,20 +111,24 @@ $(function () {
       //marginTop: 100,
       polar: true,
       events: {
-        load: function () {
+          load: function () {
           var chart = $('#container').highcharts();
           var plotLine = this.xAxis.plotLines;
 
           // Get user defined tables from signalk-polar API
-          var userTables = getTables()
-          vesselName = getVesselName()
-          setTimeout(function () {
-           chart.setTitle({
+         // var userTables = getTables()
+         // vesselName = getVesselName()
+         // setTimeout(function () {
+          // chart.setTitle({
              // align: 'left',
-           text: vesselName + ' live polar chart'
-           });
+          // text: vesselName + ' live polar chart'
 
-            console.log("max index: " + tableIndexMax)
+          // });
+         chart.setTitle({
+	     align: 'left',
+             text:''
+	 });
+          /*  console.log("max index: " + tableIndexMax)
             console.log("tableData: " + JSON.stringify(userTables, null, 4));
             var iter = 2
             Object.keys(userTables).forEach(function(key) {
@@ -137,7 +141,7 @@ $(function () {
                 connectEnds: false
               })
             })
-          }, 500)
+          }, 500)*/
 
           // set up the updating of the plotlines each second
          /* setInterval(function () {
@@ -254,7 +258,8 @@ $(function () {
 
           setInterval(function () {
 	   // var slider = document.getElementById("myRange");
-           var subTitle ="Wind speed: "+ getWind().toFixed(2)+' +/- '+windRange.toFixed(1)+' kn';
+           //vesselName = getVesselName()
+           var subTitle = vesselName + " Wind speed: "+ getWind().toFixed(2)+' +/- '+windRange.toFixed(1)+' kn';
 	   // var subTitle ='blah'+ slider.value+'tada' ;
 	  
            // (async() => {
@@ -502,12 +507,12 @@ $(function () {
       connectEnds: false,
       turboThreshold: 0,
       marker: false,	    
-    },{
+    }/*,{
       type: 'scatter',
       name: 'Current performance',
       color: 'orange',
       data: [current],
-    }]
+    }*/]
    
    
    	  
