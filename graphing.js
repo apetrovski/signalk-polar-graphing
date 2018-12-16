@@ -388,14 +388,14 @@ $(function () {
 
     pane: {
       center: ["50%", "50%"],
-      startAngle: 0,
-      endAngle: 360
+      startAngle: -180,
+      endAngle: 180
     },
 
     xAxis: {
       tickInterval: 45,
-      min: -180,
-      max: 180,
+      min:-180,
+      max:180,
       labels: {
         formatter: function () {
           return this.value + '°';
