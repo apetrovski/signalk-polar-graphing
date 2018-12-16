@@ -257,10 +257,10 @@ $(function () {
           var seriess = this.series;
 
           setInterval(function () {
-	   // var slider = document.getElementById("myRange");
+	   // var windMinSlider = document.getElementById("myRange");
            //vesselName = getVesselName()
            var subTitle = vesselName + " Wind speed: "+ getWind().toFixed(2)+' +/- '+windRange.toFixed(1)+' kn';
-	   // var subTitle ='blah'+ slider.value+'tada' ;
+	   // var subTitle ='blah'+ windMinSlider.value+'tada' ;
 	  
            // (async() => {
               try {
@@ -312,7 +312,7 @@ $(function () {
 	  //update current polar each second
 	  
 	    function test(windSpeed, seriesStart, stbPolar, polarWindIndex, chart){	
-           //   setInterval(slider1(),1000);
+           //   setInterval(windMinSlider1(),1000);
 	  //  setInterval(function  () {
               //var chart = $('#container').highcharts();
               options = chart.options;
@@ -354,17 +354,17 @@ $(function () {
 	 setInterval(function(){
 	  // var today = new Date(); 
            var chart = $('#container').highcharts();
-	   var slider = document.getElementById("windMin");
-	   var slider2 = document.getElementById("step");
-          // var slider = $('#myRange')[0];
-	  // chart.setTitle(null, {text: slider.innerHTML +"~"+(today).getSeconds()}); 
+	   var windMinSlider = document.getElementById("windMin");
+	   var windStepSlider = document.getElementById("step");
+          // var windMinSlider = $('#myRange')[0];
+	  // chart.setTitle(null, {text: windMinSlider.innerHTML +"~"+(today).getSeconds()}); 
           
-	  test(parseInt(slider.value)/1.9438,0,stbPolar5,0,chart);       
-          test((parseInt(slider2.value)+parseInt(slider.value))/1.9438,1,stbPolar10,1,chart);
-          test((parseInt(slider2.value)*2+parseInt(slider.value))/1.9438,2,stbPolar15,2,chart);
-          test((parseInt(slider2.value)*3+parseInt(slider.value))/1.9438,3,stbPolar20,3,chart);
-          test((parseInt(slider2.value)*4+parseInt(slider.value))/1.9438,4,stbPolar25,4,chart);
-          test((parseInt(slider2.value)*5+parseInt(slider.value))/1.9438,5,stbPolar30,5,chart);
+	  test(parseInt(windMinSlider.value)/1.9438,0,stbPolar5,0,chart);       
+          test((parseInt(windStepSlider.value)+parseInt(windMinSlider.value))/1.9438,1,stbPolar10,1,chart);
+          test((parseInt(windStepSlider.value)*2+parseInt(windMinSlider.value))/1.9438,2,stbPolar15,2,chart);
+          test((parseInt(windStepSlider.value)*3+parseInt(windMinSlider.value))/1.9438,3,stbPolar20,3,chart);
+          test((parseInt(windStepSlider.value)*4+parseInt(windMinSlider.value))/1.9438,4,stbPolar25,4,chart);
+          test((parseInt(windStepSlider.value)*5+parseInt(windMinSlider.value))/1.9438,5,stbPolar30,5,chart);
 	  }
 	,1000);
 	var chart = $('#container').highcharts();

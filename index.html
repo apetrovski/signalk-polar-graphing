@@ -10,8 +10,8 @@
         
         function saveCookies()
 	{
-		myCookies["_slider1"] = document.getElementById("step").value;
-		myCookies["_slider2"] = document.getElementById("windMin").value;
+		myCookies["_windMinSlider1"] = document.getElementById("step").value;
+		myCookies["_windStepSlider"] = document.getElementById("windMin").value;
 		document.cookie = "";
 		var cookieString = "";
 		for (var key in myCookies)
@@ -29,12 +29,12 @@
 			var cookie = kv[id].split("=");
 			myCookies[cookie[0].trim()] = cookie[1];
 		}
-	        document.getElementById("step").value = myCookies["_slider1"] ;
-                document.getElementById("windMin").value = myCookies["_slider2"];
-		var output = document.getElementById("demo");
-             	var output2 = document.getElementById("demo2");
-		output.innerHTML = slider.value;
-		output2.innerHTML = slider2.value;
+	        document.getElementById("step").value = myCookies["_windMinSlider1"] ;
+                document.getElementById("windMin").value = myCookies["_windStepSlider"];
+		var windMinOutput = document.getElementById("windMinText");
+             	var windStepOutput = document.getElementById("windStepText");
+		windMinOutput.innerHTML = windMinSlider.value;
+		windStepOutput.innerHTML = windStepSlider.value;
 	}
 
 
@@ -51,37 +51,37 @@
   
   <table style="width:100%; height:100%" >
   <tr height="100%">
-     <td><center><p>Step: <span id="demo2"></span></p></center><input type="range" min="5" max="20" value= "5"  step="5" class="input-range" id="step"> </td> 
+	  <td height="100%"><center><a href="/">Home</a><p>Step: <span height = "100%" id="windStepText"></span></p></center><input type="range" min="5" max="20" value= "5"  step="5" class="input-range" id="step"> </td> 
      <td height="100%"><div style="width:100%; height:100%" id="container"/></td>
-     <td><center> <p>Speed: <span id="demo"></span></p></center><input type="range" min="5" max="20" value= "5" step="5" class="input-range" id="windMin"> </td>
+     <td><center> <p>Speed: <span id="windMinText"></span></p></center><input type="range" min="5" max="20" value= "5" step="5" class="input-range" id="windMin"> </td>
   </tr>
-  <tr>
+  <tr>    
      <td></td>
      <td><button id="toggle">Polar/Line chart toggle</button></td>
   </tr>
   
-  <!--p>Value: <span id="demo"></span></p>
-  <p>Value: <span id="demo2"></span></p-->	
+  <!--p>Value: <span id="windMinText"></span></p>
+  <p>Value: <span id="windStepText"></span></p-->	
 
   <script src="node_modules/highcharts/highstock.js"></script>
   <script src="node_modules/highcharts/highcharts-more.js"></script>
   <script src="node_modules/highcharts/modules/exporting.js"></script>
 
   <script type="text/javascript">
-  var slider = document.getElementById("windMin");
-  var output = document.getElementById("demo");
-  output.innerHTML = slider.value;
+  var windMinSlider = document.getElementById("windMin");
+  var windMinOutput = document.getElementById("windMinText");
+  windMinOutput.innerHTML = windMinSlider.value;
 
-  slider.oninput = function() {
-    output.innerHTML = slider.value;
+  windMinSlider.oninput = function() {
+    windMinOutput.innerHTML = windMinSlider.value;
     saveCookies();
   }
-   var slider2 = document.getElementById("step");
-  var output2 = document.getElementById("demo2");
-  output2.innerHTML = slider2.value;
+   var windStepSlider = document.getElementById("step");
+  var windStepOutput = document.getElementById("windStepText");
+  windStepOutput.innerHTML = windStepSlider.value;
 
-  slider2.oninput = function() {
-    output2.innerHTML = slider2.value;
+  windStepSlider.oninput = function() {
+    windStepOutput.innerHTML = windStepSlider.value;
     saveCookies();
   }
 
