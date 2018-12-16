@@ -394,8 +394,8 @@ $(function () {
 
     xAxis: {
       tickInterval: 45,
-      min: 0,
-      max: 360,
+      min: -180,
+      max: 180,
       labels: {
         formatter: function () {
           return this.value + '°';
