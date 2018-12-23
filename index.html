@@ -12,6 +12,7 @@
 	{
 		myCookies["_windMinSlider1"] = document.getElementById("step").value;
 		myCookies["_windStepSlider"] = document.getElementById("windMin").value;
+		myCookies["_polarOrLine"] = document.getElementById("toggle").innerHTML; 
 		document.cookie = "";
 		var cookieString = "";
 		for (var key in myCookies)
@@ -31,6 +32,7 @@
 		}
 	        document.getElementById("step").value = myCookies["_windMinSlider1"] ;
                 document.getElementById("windMin").value = myCookies["_windStepSlider"];
+		document.getElementById("toggle").innerHTML = myCookies["_polarOrLine"];
 		var windMinOutput = document.getElementById("windMinText");
              	var windStepOutput = document.getElementById("windStepText");
 		windMinOutput.innerHTML = windMinSlider.value;
@@ -50,17 +52,15 @@
   
   <table style="width:100%; height:100%" >
   <tr>
-     <td><center><a href="/">Home</a></center></td>
-     <td><span id = "statusText"></span></td>
+     <td width = "7%"><center><a href="/">Home</a></center></td>
+     <td width = "86%" ><center><span id = "statusText" ></span></center></td>
+     <td width = "7%"><center><button id="toggle">Line</button></center></td>
   </tr>
   <tr height="100%">
      <td height="100%"><center><p>Step: <span height = "100%" id="windStepText"></span></p></center><input type="range" min="5" max="20" value= "5"  step="5" class="input-range" id="step"> </td> 
-     <td height="100%"><div style="width:100%; height:100%" id="container"/></td>
+     <td height="100%"><div style="width:100%; height:100%" id="container"/></td> 
+
      <td><center> <p>Speed: <span id="windMinText"></span></p></center><input type="range" min="5" max="20" value= "5" step="5" class="input-range" id="windMin"> </td>
-  </tr>
-  <tr>
-     <td></td>
-     <td><button id="toggle">Polar/Line</button></td>
   </tr>
   
   <!--p>Value: <span id="windMinText"></span></p>

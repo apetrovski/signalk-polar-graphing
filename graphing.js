@@ -102,13 +102,13 @@ $(function () {
   Highcharts.setOptions({
     global : {
       useUTC : false
-    }
+    },
   });
   
   var screenWidth = window.innerWidth;
-  console.log("screen width: " + screenWidth);
+//  console.log("screen width: " + screenWidth);
   var screenHeight = window.innerHeight;
-  console.log("screen height: " + screenHeight);
+//  console.log("screen height: " + screenHeight);
 
   if(window.innerWidth > window.innerHeight)
   {
@@ -119,11 +119,13 @@ $(function () {
   else
   {
      layout = "horizontal";
-     verticalAlign = "top";
+     verticalAlign = "bottom";
      align = "middle";
   }
 
   var graphTitle = document.getElementById('statusText');
+  var initPolar = document.getElementById("toggle").innerHTML == "Line";
+	console.log("initPolar:" + initPolar);
   $('#container').highcharts({
 
     chart: {
@@ -131,7 +133,7 @@ $(function () {
       //borderWidth: 2,
       marginLeft: 50,
       //marginTop: 100,
-      polar: true,
+      polar: initPolar,
       events: {
           load: function () {
           var chart = $('#container').highcharts();
@@ -408,7 +410,8 @@ $(function () {
       layout : `${layout}`,
       verticalAlign : `${verticalAlign}`,
       align : `${align}`,
-      symbolHeight: "100%",
+      symbolHeight: 48,
+      symbolWidth: 48
     },
 
     pane: {
@@ -542,13 +545,21 @@ $(function () {
    
    	  
   });
-
-  $('#toggle').click(function () {
+    $('#toggle').click(function () {
     var chart = $('#container').highcharts(),
     options = chart.options;
     options.chart.polar = !options.chart.polar;
+    if(options.chart.polar)
+    {
+	document.getElementById("toggle").innerHTML = "Line";
+    }
+    else
+    {
+        document.getElementById("toggle").innerHTML = "Polar";
+    }
+
+    saveCookies();
 //    options.legend.layout.vertical= options.legend.layout.horizontal;
-    	  
     $('#container').highcharts(options);
   });
 
