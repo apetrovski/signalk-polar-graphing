@@ -70,6 +70,9 @@ var polar1=[];
 var tackAngle;
 var reachAngle;
 
+var layout = "horizontal";
+var verticalAlign = "middle";
+var align = "right";
 
 var windSpeed = 5;
 var windRange = 0.2 / 1.9438;
@@ -101,7 +104,26 @@ $(function () {
       useUTC : false
     }
   });
+  
+  var screenWidth = window.innerWidth;
+  console.log("screen width: " + screenWidth);
+  var screenHeight = window.innerHeight;
+  console.log("screen height: " + screenHeight);
 
+  if(window.innerWidth > window.innerHeight)
+  {
+     layout = "vertical";
+     verticalAlign = "middle";
+     align = "right";
+  }
+  else
+  {
+     layout = "horizontal";
+     verticalAlign = "top";
+     align = "middle";
+  }
+
+  var graphTitle = document.getElementById('statusText');
   $('#container').highcharts({
 
     chart: {
@@ -280,7 +302,9 @@ $(function () {
                           }else{
 				 subTitle = subTitle + " Sailing" 
                           }
-				chart.setTitle(null, {text: subTitle});
+                          graphTitle.innerHTML =  subTitle;
+		        //  console.log(graphTitle);
+
 			});
 		
               } catch (e) {
@@ -381,9 +405,10 @@ $(function () {
     },
 
     legend: {
-      verticalAlign: "top",
-      layout: "horizontal",
-      fontSize: 24
+      layout : `${layout}`,
+      verticalAlign : `${verticalAlign}`,
+      align : `${align}`,
+      symbolHeight: "100%",
     },
 
     pane: {
@@ -522,7 +547,7 @@ $(function () {
     var chart = $('#container').highcharts(),
     options = chart.options;
     options.chart.polar = !options.chart.polar;
-   // options.legend.enabled= !options.legend.enabled;
+//    options.legend.layout.vertical= options.legend.layout.horizontal;
     	  
     $('#container').highcharts(options);
   });
