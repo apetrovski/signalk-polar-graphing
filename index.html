@@ -37,7 +37,6 @@
 		windStepOutput.innerHTML = windStepSlider.value;
 	}
 
-
 </script>
 <!-- <script src="polar.js"></script> -->
 <link rel="stylesheet" type="text/css" href="css/highcharts.css">
@@ -50,14 +49,18 @@
 <body style="width:100%; height:100%" onload = "loadCookies()" >
   
   <table style="width:100%; height:100%" >
+  <tr>
+     <td><center><a href="/">Home</a></center></td>
+     <td><span id = "statusText"></span></td>
+  </tr>
   <tr height="100%">
-	  <td height="100%"><center><a href="/">Home</a><p>Step: <span height = "100%" id="windStepText"></span></p></center><input type="range" min="5" max="20" value= "5"  step="5" class="input-range" id="step"> </td> 
+     <td height="100%"><center><p>Step: <span height = "100%" id="windStepText"></span></p></center><input type="range" min="5" max="20" value= "5"  step="5" class="input-range" id="step"> </td> 
      <td height="100%"><div style="width:100%; height:100%" id="container"/></td>
      <td><center> <p>Speed: <span id="windMinText"></span></p></center><input type="range" min="5" max="20" value= "5" step="5" class="input-range" id="windMin"> </td>
   </tr>
-  <tr>    
+  <tr>
      <td></td>
-     <td><button id="toggle">Polar/Line chart toggle</button></td>
+     <td><button id="toggle">Polar/Line</button></td>
   </tr>
   
   <!--p>Value: <span id="windMinText"></span></p>
