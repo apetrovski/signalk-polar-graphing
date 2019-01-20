@@ -234,11 +234,11 @@ $(function () {
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
 	        var x = await response.json();
                 x = JSON.stringify(x.value)
-                tackAngle =(x/Math.PI*180)+180;
-		tackAngle=Math.trunc(tackAngle/awaBucketDegree);
-		awaHistogram[tackAngle]++;
+                tackAngle =(x/Math.PI*180);
+		bucketIndex=Math.trunc(tackAngle/awaBucketDegree);
+		awaHistogram[bucketIndex]++;
 		console.log(awaHistogram);
-		windAngleQue.unshift(tackAngle);
+		windAngleQue.unshift(bucketIndex);
 		updateCount++;
 		if (windAngleQue.length>100){
 		finPos=windAngleQue[windAngleQue.length-1];
