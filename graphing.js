@@ -78,7 +78,10 @@ var windSpeed = 5;
 var windRange = 0.2 / 1.9438;
 
 var nightmode = false;
-
+var windAngleQue=[];
+var updateCount=0;
+var awaHistogram=Array.from(Array(37), () => 0);
+console.log(awaHistogram);
 function getWind() {
   (async() => {
     try {
@@ -230,8 +233,22 @@ $(function () {
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
 	        var x = await response.json();
                 x = JSON.stringify(x.value)
-                tackAngle =(x/Math.PI*180);
-
+                tackAngle =(x/Math.PI*180)+180;
+		tackAngle=Math.round(tackAngle*2/20);
+		awaHistogram[tackAngle]++;
+		console.log(awaHistogram);
+		windAngleQue.unshift(tackAngle);
+		updateCount++;
+		if (windAngleQue.length>100){
+		finPos=windAngleQue[windAngleQue.length-1];
+		console.log(finPos);
+		awaHistogram[finPos]--;
+		windAngleQue.pop(windAngleQue.length- 1);
+		}
+		if (updateCount%10==0){
+		}
+		//console.log(windAngleQue);
+		console.log(updateCount);
               //  response = await fetch("/signalk/v1/api/vessels/self/performance/gybeAngle");
               //  var y = await JSON.stringify(response.json().value);
               //  y = JSON.stringify(y.value);
