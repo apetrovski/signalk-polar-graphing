@@ -234,7 +234,7 @@ $(function () {
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
 	        var x = await response.json();
                 x = JSON.stringify(x.value)
-                tackAngle =(x/Math.PI*180)+180;
+                tackAngle =(x/Math.PI*180);
 		tackAngle=Math.trunc(tackAngle/awaBucketDegree);
 		awaHistogram[tackAngle]++;
 		console.log(awaHistogram);
@@ -246,7 +246,8 @@ $(function () {
 		awaHistogram[finPos]--;
 		windAngleQue.pop(windAngleQue.length- 1);
 		}
-		if (updateCount%10==0){
+		if (updateCount%1==0){
+			chart.series[6].setData(awaHistogram,true, true, false);
 		}
 		//console.log(windAngleQue);
 		console.log(updateCount);
