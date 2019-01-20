@@ -401,7 +401,6 @@ $(function () {
 	   var windStepSlider = document.getElementById("step");
           // var windMinSlider = $('#myRange')[0];
 	  // chart.setTitle(null, {text: windMinSlider.innerHTML +"~"+(today).getSeconds()}); 
-          
 	  test(parseInt(windMinSlider.value)/1.9438,0,stbPolar5,0,chart);       
           test((parseInt(windStepSlider.value)+parseInt(windMinSlider.value))/1.9438,1,stbPolar10,1,chart);
           test((parseInt(windStepSlider.value)*2+parseInt(windMinSlider.value))/1.9438,2,stbPolar15,2,chart);
@@ -433,18 +432,19 @@ $(function () {
 
     pane: {
       center: ["50%", "50%"],
-      startAngle: -180,
-      endAngle: 180
+      startAngle: 0,
+      endAngle: 360
     },
 
     xAxis:[{
       tickInterval: 45,
-      min:-180,
-      max:180,
+      min:0,
+      max:360,
       labels: {
         formatter: function () {
           return this.value + '°';
         }
+	
       },
     /*plotLines: [{
         color: 'red', // Color value
@@ -475,9 +475,9 @@ $(function () {
       }]*/
     },{
       tickInterval: 45,
-      min:-180,
-      max:180,
-      visible: false 
+      min:0,
+      max:360,
+      visible: false,
        }],
 
     yAxis: [{
@@ -490,8 +490,8 @@ $(function () {
 
     plotOptions: {
       series: {
-        pointStart: -180,
-       // pointInterval: 45,
+        pointStart: 0,
+        pointInterval: 360/awaHistogram.length,
         enableMouseTracking: false
 
       },
@@ -568,7 +568,7 @@ $(function () {
       color: 'red',
       yAxis: 1,
       xAxis: 1,
-      data: [1,2,3,100,5,6,735,800],
+      //data: [],
     }]
    
    
