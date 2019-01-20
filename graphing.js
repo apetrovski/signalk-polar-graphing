@@ -547,8 +547,8 @@ $(function () {
     },{
       name: 'Histogram',
       type: 'histogram',
-      name: 'Current performance',
-      color: 'orange',
+      name: 'Histogram',
+      color: 'red',
       yAxis: 1,
       xAxis: 1,
       data: [1,2,3,100,5,6,735,800],
