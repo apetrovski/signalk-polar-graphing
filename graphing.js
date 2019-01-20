@@ -420,7 +420,7 @@ $(function () {
       endAngle: 180
     },
 
-    xAxis: {
+    xAxis:[{
       tickInterval: 45,
       min:-180,
       max:180,
@@ -456,16 +456,25 @@ $(function () {
           x: 20
         }
       }]*/
-    },
+    },{
+      tickInterval: 45,
+      min:-180,
+      max:180,
+      visible: false 
+       }],
 
-    yAxis: {
-      min: 0
-    },
+    yAxis: [{
+       // title: { text: 'polarWind[]' }
+    }, {
+       visible: false
+       // title: { text: 'Histogram' },
+       // opposite: true
+    }],
 
     plotOptions: {
       series: {
-        pointStart: 0,
-        pointInterval: 45,
+        pointStart: -180,
+       // pointInterval: 45,
         enableMouseTracking: false
 
       },
@@ -535,12 +544,15 @@ $(function () {
       connectEnds: false,
       turboThreshold: 0,
       marker: false,	    
-    }/*,{
-      type: 'scatter',
+    },{
+      name: 'Histogram',
+      type: 'histogram',
       name: 'Current performance',
       color: 'orange',
-      data: [current],
-    }*/]
+      yAxis: 1,
+      xAxis: 1,
+      data: [1,2,3,100,5,6,735,800],
+    }]
    
    
    	  
