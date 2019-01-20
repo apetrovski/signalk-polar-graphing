@@ -78,7 +78,7 @@ var windSpeed = 5;
 var windRange = 0.2 / 1.9438;
 
 var nightmode = false;
-var awaBucketDegree=10 ;
+var awaBucketDegree=1;
 var windAngleQue=[];
 var updateCount=0;
 var awaHistogram=Array.from(Array((360/awaBucketDegree)), () => 0);
@@ -235,10 +235,10 @@ $(function () {
 	        var x = await response.json();
                 x = JSON.stringify(x.value)
                 tackAngle =(x/Math.PI*180);
-		tackAngle=Math.trunc(tackAngle/awaBucketDegree);
-		awaHistogram[tackAngle]++;
+		bucketIndex=Math.trunc(tackAngle/awaBucketDegree);
+		awaHistogram[bucketIndex]++;
 		console.log(awaHistogram);
-		windAngleQue.unshift(tackAngle);
+		windAngleQue.unshift(bucketIndex);
 		updateCount++;
 		if (windAngleQue.length>100){
 		finPos=windAngleQue[windAngleQue.length-1];
