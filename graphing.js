@@ -245,9 +245,13 @@ $(function () {
 		console.log(finPos);
 		awaHistogram[finPos]--;
 		windAngleQue.pop(windAngleQue.length- 1);
+		
 		}
 		if (updateCount%1==0){
 			chart.series[6].setData(awaHistogram,true, true, false);
+			if(options.chart.polar){ 
+				chart.series[7].setData(awaHistogram.map(function(cv){return Math.max(...awaHistogram)*4-cv}),true, true, false);
+			}
 		}
 		//console.log(windAngleQue);
 		console.log(updateCount);
@@ -421,7 +425,6 @@ $(function () {
         }
       }
 
-   
     },
 
     legend: {
@@ -480,12 +483,13 @@ $(function () {
       min:0,
       max:360,
       visible: false,
+      
        }],
 
     yAxis: [{
        // title: { text: 'polarWind[]' }
     }, {
-       visible: false
+       visible: false,
        // title: { text: 'Histogram' },
        // opposite: true
     }],
@@ -494,8 +498,10 @@ $(function () {
       series: {
         pointStart: 0,
         pointInterval: 360/awaHistogram.length,
-        enableMouseTracking: false
-
+        enableMouseTracking: false,
+      },
+      histogram:{
+	stacking: (initPolar ? 'percent' : 'normal'),
       },
       column: {
         pointPadding: 0,
@@ -566,11 +572,19 @@ $(function () {
     },{
       name: 'Histogram',
       type: 'histogram',
-      name: 'Histogram',
       color: 'red',
       yAxis: 1,
       xAxis: 1,
       //data: [],
+      //stacking: 'percent'
+    },{
+      name: 'Histogram2',
+      type: 'histogram',
+      color: 'rgba(255, 255, 255, 0)',
+      yAxis: 1,
+      xAxis: 1,
+      //data: [],
+      //stacking: 'percent',
     }]
    
    
@@ -583,10 +597,13 @@ $(function () {
     if(options.chart.polar)
     {
 	document.getElementById("toggle").innerHTML = "Line";
+	chart.options.plotOptions.histogram.stacking = 'percent';
     }
     else
     {
         document.getElementById("toggle").innerHTML = "Polar";
+	chart.options.plotOptions.histogram.stacking = 'normal';
+	chart.series[7].setData([],true,true,false);
     }
 
     saveCookies();
