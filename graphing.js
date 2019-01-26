@@ -225,11 +225,45 @@ $(function () {
               });
             })();
           }, 1000);*/
+	  setInterval(function (){
+	  (async() => { 
+		try {
+               // var response = await fetch("/signalk/v1/aipi/vessels/self/performance/beatAngle");
+                var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
+                var x = await response.json();
+                x = JSON.stringify(x.value)
+                tackAngle =(x/Math.PI*180);
+                bucketIndex=Math.trunc(tackAngle/awaBucketDegree);
+                awaHistogram[bucketIndex]++;
+                console.log(awaHistogram);
+                windAngleQue.unshift(bucketIndex);
+                updateCount++;
+                if (windAngleQue.length>100){
+                finPos=windAngleQue[windAngleQue.length-1];
+                console.log(finPos);
+                awaHistogram[finPos]--;
+                windAngleQue.pop(windAngleQue.length- 1);
+                }
+                if (updateCount%1==0){
+                        chart.series[6].setData(awaHistogram,true, true, false);
+                }
+                //console.log(windAngleQue);
+                console.log(updateCount);
+              //  response = await fetch("/signalk/v1/api/vessels/self/performance/gybeAngle");
+              //  var y = await JSON.stringify(response.json().value);
+              //  y = JSON.stringify(y.value);
+              //  reachAngle = (y/Math.PI*180);
+
+              }catch (e) {
+                console.log("Error fetching beat and gybe angles")
+              }
+	  })(); 
+	  },250);
           setInterval(function () {
 
             chart = $('#container').highcharts();
             (async() => {
-              try {
+            /*  try {
                // var response = await fetch("/signalk/v1/aipi/vessels/self/performance/beatAngle");
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
 	        var x = await response.json();
@@ -262,7 +296,7 @@ $(function () {
 
               } catch (e) {
                 console.log("Error fetching beat and gybe angles")
-              }
+              }*/
 
               chart.xAxis[0].removePlotLine('tack');
               chart.xAxis[0].removePlotLine('reach');
