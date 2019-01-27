@@ -174,43 +174,19 @@ $(function () {
                 console.log("Error updating wind angle histogram")
               }
 	  })(); 
-	  },250);
+	  },1000);
           setInterval(function () {
 
             chart = $('#container').highcharts();
             (async() => {
 
               chart.xAxis[0].removePlotLine('tack');
-              chart.xAxis[0].removePlotLine('reach');
               chart.xAxis[0].addPlotLine({
                 color: 'red', // Color value
                 dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
                 value: tackAngle,//getTarget().Tack, // Value of where the line will appear
                 width: 2, // Width of the line
                 id: 'tack',
-               /* label: {
-                  text: 'Target tack '+tackAngle.toFixed(2)+ '°',
-                  verticalAlign: 'center',
-                  textAlign: 'right',
-                  rotation: 90,//rotation: tackAngle-90,
-                  //y: 12,
-                  x: 0//120
-                }*/
-              });
-              chart.xAxis[0].addPlotLine({
-                color: 'red', // Color value
-                dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-                value: reachAngle,//getTarget().Tack, // Value of where the line will appear
-                width: 2, // Width of the line
-                id: 'reach',
-                label: {
-                  text: 'Target reach '+parseFloat(reachAngle).toFixed(2)+ '°',
-                  verticalAlign: 'right',
-                  textAlign: 'top',
-                  rotation: 90,//rotation: reachAngle-90,
-                  //y: 12,
-                  x: 0//20
-                }
               });
             })();
           }, 1000);
