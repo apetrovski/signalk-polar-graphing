@@ -64,8 +64,10 @@ var windSpeed = 5;
 var windRange = 0.2 / 1.9438;
 
 var nightmode = false;
-var awaBucketDegree=1;
+var awaBucketDegree=5;
 var windAngleQue=[];
+var windAngleQueMax = 10;
+var avgAwa = 0;
 var updateCount=0;
 var awaHistogram=Array.from(Array((360/awaBucketDegree)), () => 0);
 console.log(awaHistogram);
@@ -153,15 +155,18 @@ $(function () {
                 console.log(awaHistogram);
                 windAngleQue.unshift(bucketIndex);
                 updateCount++;
-                if (windAngleQue.length>60){
+                if (windAngleQue.length > windAngleQueMax){
                 finPos=windAngleQue[windAngleQue.length-1];
                 console.log(finPos);
                 awaHistogram[finPos]--;
                 windAngleQue.pop(windAngleQue.length- 1);
                 }
                 if (updateCount%1==0){
-                        chart.series[7].setData(awaHistogram,true, true, false);
-                        chart.series[6].setData(awaHistogram,true, true, false);
+                        chart.series[7].setData(awaHistogram,false, false, false);
+                        chart.series[6].setData(awaHistogram,true, false, false);
+			avgAwa = Math.atan2(
+				windAngleQue.reduce(function(total, num){return total+Math.sin(num * awaBucketDegree / 180 * Math.PI)}, 0), 
+				windAngleQue.reduce(function(total, num){return total+Math.cos(num * awaBucketDegree / 180 * Math.PI)}, 0)) / Math.PI * 180;
                 }
                 //console.log(windAngleQue);
                 console.log(updateCount);
@@ -182,11 +187,19 @@ $(function () {
 
               chart.xAxis[0].removePlotLine('tack');
               chart.xAxis[0].addPlotLine({
-                color: 'red', // Color value
+                color: '#FF0000', // Color value
                 dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
                 value: tackAngle,//getTarget().Tack, // Value of where the line will appear
                 width: 2, // Width of the line
                 id: 'tack',
+              });
+	      chart.xAxis[0].removePlotLine('awa');
+              chart.xAxis[0].addPlotLine({
+                color: 'blue', // Color value
+                dashStyle: 'shortdash', // Style of the plot line. Default to solid
+                value: avgAwa,//getTarget().Tack, // Value of where the line will appear
+                width: 2, // Width of the line
+                id: 'awa',
               });
             })();
           }, 1000);
@@ -284,7 +297,7 @@ $(function () {
           test((parseInt(windStepSlider.value)*4+parseInt(windMinSlider.value))/1.9438,4,stbPolar25,4,chart);
           test((parseInt(windStepSlider.value)*5+parseInt(windMinSlider.value))/1.9438,5,stbPolar30,5,chart);
 	  }
-	,1000);
+	,10000);
 	var chart = $('#container').highcharts();
 	chart.setSize(
               $(container).width(),
