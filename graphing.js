@@ -1,5 +1,4 @@
 //console.log = function(){}
-var tableIndexMax = 2 //should start as 2, port, starboard and combined already hard-coded
 const tableData = {}
 var vesselName;
 
@@ -16,45 +15,32 @@ function getVesselName(){
   return vesselName
 }
 getVesselName();
-function getTables(err, response){ // get user entered polars
-
-  $.getJSON("/plugins/signalk-polar/listPolarTables", function(json) {
-    json.forEach(function(table) {
-      if(table.name!='polar'){// only show user entered values this way
-        tableIndexMax ++
-        $.getJSON("/plugins/signalk-polar/listWindSpeeds?table=" + table.name, function (windSpeeds) {
-          windSpeeds.forEach(function nameTables(windSpeed){
-            var tableName = table.name + "_" + windSpeed.windSpeed
-            //tableData.push(tableName) //
-            const polarArray = [];
-            tableData[tableName]= polarArray;
-            //console.log("tableData: " + tableData)
-            $.getJSON("/plugins/signalk-polar/polarTable/?windspeed=" + windSpeed.windSpeed + "&interval=" + windRange + "&table=" + table.name, function (combination) {
-              combination.forEach(function(entry){
-                var windDeg = Math.abs(entry['angle']/Math.PI*180);
-                var speedKnots = entry['speed']/1852*3600;
-                var item = [windDeg, speedKnots]
-                polarArray.push(item)
-              })
-            })
-          })
-        });
-      }
-    });
-    //console.log("response max index: " + tableIndexMax) //ok here
 
 
-  });
+function switchPolar(p) {
+    var chart = $('#container').highcharts(),
+    options = chart.options;
+    options.chart.polar = p;
+    if(p)
+    {
+        document.getElementById("toggle").innerHTML = "Line";
+        chart.options.yAxis[1].reversed = true;
+        //chart.options.plotOptions.histogram.stacking = 'percent';
+    }
+    else
+    {
+        document.getElementById("toggle").innerHTML = "Polar";
+	chart.options.yAxis[1].reversed=false;
+        //chart.options.plotOptions.histogram.stacking = 'normal';
+        //chart.series[7].setData([],true,true,false);
+    }
 
-  if(err){
-    console.log("error: " + err)
-  } else {
-
-    return tableData
-  }
-
+    saveCookies();
+//    options.legend.layout.vertical= options.legend.layout.horizontal;
+    $('#container').highcharts(options);
 }
 
+var polarInited = false;
 //to be updated once every second?:
 var current = [];
 //updated only on refresh:
@@ -128,8 +114,6 @@ $(function () {
   }
 
   var graphTitle = document.getElementById('statusText');
-  var initPolar = document.getElementById("toggle").innerHTML == "Line";
-	console.log("initPolar:" + initPolar);
   $('#container').highcharts({
 
     chart: {
@@ -137,94 +121,25 @@ $(function () {
       //borderWidth: 2,
       marginLeft: 50,
       //marginTop: 100,
-      polar: initPolar,
+     // polar: initPolar,
       events: {
           load: function () {
           var chart = $('#container').highcharts();
           var plotLine = this.xAxis.plotLines;
 
-          // Get user defined tables from signalk-polar API
-         // var userTables = getTables()
-         // vesselName = getVesselName()
-         // setTimeout(function () {
-          // chart.setTitle({
-             // align: 'left',
-          // text: vesselName + ' live polar chart'
-
-          // });
          chart.setTitle({
 	     align: 'left',
              text:''
 	 });
-          /*  console.log("max index: " + tableIndexMax)
-            console.log("tableData: " + JSON.stringify(userTables, null, 4));
-            var iter = 2
-            Object.keys(userTables).forEach(function(key) {
-              chart.addSeries({
-                type: 'line',
-                name: key.replace(/_/g, " ") + ' m/s',
-                dashStyle: 'shortdashdot',
-                data: userTables[key],
-                visible: true,
-                connectEnds: false
-              })
-            })
-          }, 500)*/
+	if (!polarInited)
+	{
+		polarInited = true;
+		loadCookies();
+		var initPolar = document.getElementById("toggle").innerHTML == "Line";
+		console.log("initPolar:" + initPolar);		
+		switchPolar(initPolar);
 
           // set up the updating of the plotlines each second
-         /* setInterval(function () {
-
-            chart = $('#container').highcharts();
-            (async() => {
-              try {
-                var response = await fetch("/signalk/v1/api/vessels/self/performance/beatAngle");
-                var x = await response.json();
-                x = JSON.stringify(x.value)
-                tackAngle = Math.abs(x/Math.PI*180);
-
-                response = await fetch("/signalk/v1/api/vessels/self/performance/gybeAngle");
-                var y = await JSON.stringify(response.json().value);
-                y = JSON.stringify(y.value);
-                reachAngle = Math.abs(y/Math.PI*180);
-
-              } catch (e) {
-                console.log("Error fetching beat and gybe angles")
-              }
-
-              chart.xAxis[0].removePlotLine('tack');
-              chart.xAxis[0].removePlotLine('reach');
-              chart.xAxis[0].addPlotLine({
-                color: 'red', // Color value
-                dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-                value: tackAngle,//getTarget().Tack, // Value of where the line will appear
-                width: 2, // Width of the line
-                id: 'tack',
-                label: {
-                  text: 'Target tack '+tackAngle.toFixed(2)+ '°',
-                  verticalAlign: 'center',
-                  textAlign: 'right',
-                  rotation: 90,//rotation: tackAngle-90,
-                  //y: 12,
-                  x: 0//120
-                }
-              });
-              chart.xAxis[0].addPlotLine({
-                color: 'red', // Color value
-                dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-                value: reachAngle,//getTarget().Tack, // Value of where the line will appear
-                width: 2, // Width of the line
-                id: 'reach',
-                label: {
-                  text: 'Target reach '+Math.round(reachAngle)+ '°',
-                  verticalAlign: 'right',
-                  textAlign: 'top',
-                  rotation: 90,//rotation: reachAngle-90,
-                  //y: 12,
-                  x: 0//20
-                }
-              });
-            })();
-          }, 1000);*/
 	  setInterval(function (){
 	  (async() => { 
 		try {
@@ -238,17 +153,15 @@ $(function () {
                 console.log(awaHistogram);
                 windAngleQue.unshift(bucketIndex);
                 updateCount++;
-                if (windAngleQue.length>100){
+                if (windAngleQue.length>60){
                 finPos=windAngleQue[windAngleQue.length-1];
                 console.log(finPos);
                 awaHistogram[finPos]--;
                 windAngleQue.pop(windAngleQue.length- 1);
                 }
                 if (updateCount%1==0){
+                        chart.series[7].setData(awaHistogram,true, true, false);
                         chart.series[6].setData(awaHistogram,true, true, false);
-			if(options.chart.polar){ 
-                                chart.series[7].setData(awaHistogram.map(function(cv){return Math.max(...awaHistogram)*4-cv}),true, true, false);
-                        }
                 }
                 //console.log(windAngleQue);
                 console.log(updateCount);
@@ -303,8 +216,6 @@ $(function () {
           }, 1000);
           // set up the updating of the chart each second
 
-          var series = this.series[tableIndexMax + 1];
-          var seriess = this.series;
 
           setInterval(function () {
 	   // var windMinSlider = document.getElementById("myRange");
@@ -339,25 +250,6 @@ $(function () {
                 console.log(e)
                };
            // });
-            (async() => {
-              try {
-                var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
-                var x = await response.json();
-                x = JSON.stringify(x.value);
-                var xDegAbs = Math.abs(x/Math.PI*180);
-                response = await fetch("/signalk/v1/api/vessels/self/navigation/speedThroughWater");
-                var y = await response.json();
-                y = JSON.stringify(y.value);
-                var yKnots = y/1852*3600;
-                //console.log(xDegAbs + " " + yKnots);
-                series.addPoint([xDegAbs, yKnots], true, true);
-	       
-              
-	      } catch (e) {
-                console.log("Error fetching wind angle and boat speed")
-	       };
-
-	    });
 	}, 1000);
            
   
@@ -402,7 +294,6 @@ $(function () {
             }
 		
 		//, 1000);
-	 // function test2(){
 	 setInterval(function(){
 	  // var today = new Date(); 
            var chart = $('#container').highcharts();
@@ -424,6 +315,7 @@ $(function () {
               $(container).height(),
               false
         );
+	}
 
         }
       }
@@ -495,6 +387,7 @@ $(function () {
        visible: false,
        // title: { text: 'Histogram' },
        // opposite: true
+       reversed: true
     }],
 
     plotOptions: {
@@ -504,7 +397,7 @@ $(function () {
         enableMouseTracking: false,
       },
       histogram:{
-	stacking: (initPolar ? 'percent' : 'normal'),
+	stacking: 'normal' //(initPolar ? 'percent' : 'normal'),
       },
       column: {
         pointPadding: 0,
@@ -575,32 +468,38 @@ $(function () {
     },{
       name: 'Histogram',
       type: 'histogram',
-      color: 'red',
+      color: 'rgba(255, 255, 255, 0)',
       yAxis: 1,
       xAxis: 1,
       //data: [],
       //stacking: 'percent'
     },{
-      name: 'Histogram2',
+      name: 'awa histogram',
       type: 'histogram',
-      color: 'rgba(255, 255, 255, 0)',
+      color: 'red',
       yAxis: 1,
       xAxis: 1,
-      //data: [],
       //stacking: 'percent',
     }]
    
    
    	  
   });
-    $('#toggle').click(function () {
+    $('#toggle').click(function(){
     var chart = $('#container').highcharts(),
     options = chart.options;
-    options.chart.polar = !options.chart.polar;
+    switchPolar(!options.chart.polar);
+
+   });
+/*
+  function switchPolar(p) {
+    var chart = $('#container').highcharts(),
+    options = chart.options;
+    options.chart.polar = p;
     if(options.chart.polar)
     {
 	document.getElementById("toggle").innerHTML = "Line";
-	chart.options.plotOptions.histogram.stacking = 'percent';
+	//chart.options.plotOptions.histogram.stacking = 'percent';
     }
     else
     {
@@ -612,7 +511,8 @@ $(function () {
     saveCookies();
 //    options.legend.layout.vertical= options.legend.layout.horizontal;
     $('#container').highcharts(options);
-  });
+  }
+*/
 
 
    var addEvent= function(object, type, callback) {
