@@ -466,7 +466,7 @@ $(function () {
       turboThreshold: 0,
       marker: false,	    
     },{
-      name: 'Histogram',
+      name: ' ',//'Histogram',
       type: 'histogram',
       color: 'rgba(255, 255, 255, 0)',
       yAxis: 1,
