@@ -70,6 +70,7 @@ var windAngleQueMax = 10;
 var avgAwa = 0;
 var updateCount=0;
 var awaHistogram=Array.from(Array((360/awaBucketDegree)), () => 0);
+
 console.log(awaHistogram);
 function getWind() {
   (async() => {
@@ -140,7 +141,7 @@ $(function () {
 		var initPolar = document.getElementById("toggle").innerHTML == "Line";
 		console.log("initPolar:" + initPolar);		
 		switchPolar(initPolar);
-
+	
           // set up the updating of the plotlines each second
 	  setInterval(function (){
 	  (async() => { 
@@ -400,7 +401,7 @@ $(function () {
       },
       scatter: {
         dataLabels: {
-          enabled: true,
+          enabled: false,
           format: '{y:.2f}kn , {x:.1f}°'
         },
         marker: {
