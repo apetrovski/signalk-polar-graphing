@@ -53,7 +53,7 @@ var windSpeed = 5;
 var windRange = 0.2 / 1.9438;
 
 var nightmode = false;
-var awaBucketDegree=5;
+var awaBucketDegree=1;
 var windAngleQue=[];
 var windAngleQueMax = 10;
 var avgAwa = 0;
@@ -105,10 +105,9 @@ $(function () {
 	
 	  setInterval(function (){
 		(async() => {
-		var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
-                var x = await response.json();
-                x = JSON.stringify(x.value)
-                tackAngle =(x/Math.PI*180);
+		if(tackAngle > 180){
+			tackAngle = tackAngle - 360;
+		}
 		time = new Date();
 		a = time.getTime()
 		awaTime.push([a,Math.abs(tackAngle)]);
@@ -118,12 +117,15 @@ $(function () {
 			awaTime.shift()
 		};
 		chart.series[2].setData(awaTime,true,false,false);
-
+		
+		if (avgAwa > 180){
+			avgAwa = avgAwa - 360
+		}
 		awaAverageTime.push([a,Math.abs(avgAwa)]);
 		if (awaAverageTime.length > timeScatterLength){
                         awaAverageTime.shift()
                 };
-
+                console.log(awaAverageTime)
 		chart.series[3].setData(awaAverageTime,true,false,false);
 		})();
 		},1000);
@@ -136,11 +138,21 @@ $(function () {
                 var response = await fetch("/signalk/v1/api/vessels/self/environment/wind/angleApparent");
                 var x = await response.json();
                 x = JSON.stringify(x.value)
-                tackAngle =(x/Math.PI*180);
+                tackAngle=parseFloat(x);
+		tackAngle = Math.round(tackAngle/Math.PI*180);
+		if(tackAngle < -180){
+			tackAngle = tackAngle+360;
+		}
+		if(tackAngle < 0){
+			tackAngle = tackAngle+360
+		}
+		console.log("tackAngle:",tackAngle);
+		console.log('avgAwa: ',avgAwa);
                 bucketIndex=Math.trunc(tackAngle/awaBucketDegree);
                 awaHistogram[bucketIndex]++;
                 console.log(awaHistogram);
                 windAngleQue.unshift(bucketIndex);
+		console.log(windAngleQue);
                 updateCount++;
                 if (windAngleQue.length > windAngleQueMax){
                 finPos=windAngleQue[windAngleQue.length-1];
@@ -152,8 +164,8 @@ $(function () {
                         chart.series[1].setData(awaHistogram,false, false, false);
                         chart.series[0].setData(awaHistogram,true, false, false);
 			avgAwa = Math.atan2(
-				windAngleQue.reduce(function(total, num){return total+Math.sin(num * awaBucketDegree / 180 * Math.PI)}, 0), 
-				windAngleQue.reduce(function(total, num){return total+Math.cos(num * awaBucketDegree / 180 * Math.PI)}, 0)) / Math.PI * 180;
+				windAngleQue.reduce(function(total, num){return total+Math.sin(num * awaBucketDegree/180*Math.PI)}, 0), 
+				windAngleQue.reduce(function(total, num){return total+Math.cos(num * awaBucketDegree/180*Math.PI)}, 0))/Math.PI*180;
                 }
                 //console.log(windAngleQue);
                 console.log(updateCount);
@@ -176,7 +188,7 @@ $(function () {
               chart.xAxis[0].addPlotLine({
                 color: '#FF0000', // Color value
                 dashStyle: 'shortdashdot', // Style of the plot line. Default to solid
-                value: tackAngle,//getTarget().Tack, // Value of where the line will appear
+                value: tackAngle/Math.PI*180,//getTarget().Tack, // Value of where the line will appear
                 width: 2, // Width of the line
                 id: 'tack',
               });
@@ -184,7 +196,7 @@ $(function () {
               chart.xAxis[0].addPlotLine({
                 color: 'blue', // Color value
                 dashStyle: 'shortdash', // Style of the plot line. Default to solid
-                value: avgAwa,//getTarget().Tack, // Value of where the line will appear
+                value: avgAwa/Math.PI*180,//getTarget().Tack, // Value of where the line will appear
                 width: 2, // Width of the line
                 id: 'awa',
               });
