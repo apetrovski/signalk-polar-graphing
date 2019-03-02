@@ -115,30 +115,24 @@ $(function () {
                 z = parseFloat(z);
 		var awsArray = [];
 		awsTime.push([a,z*1.94384]);
-		awsArray.push(z*1.94384);
-		if (awsArray.length > timeScatterLength){
-                        awsArray.shift()
-                };
 		
 		if (awsTime.length > timeScatterLength){
 			awsTime.shift()
 		};
 		chart.series[2].setData(awsTime,true,false,false);
 		
-		function avgAws(awsArray) {
+		function avgAws(awsTime) {
  		        var total = 0;
-    			for (i = 0; i < awsArray.length; i ++) {
-        			total += awsArray[i];
+    			for (i = awsTime.length-10; i < awsTime.length; i ++) {
+        			total += awsTime[i][1];
    	 		}
-    			return total / awsArray.length;
+    			return total / 10;
 		}
-		averageAws = avgAws(awsArray)
+		averageAws = avgAws(awsTime)
 		awsAverageTime.push([a,averageAws]);
 		if (awsAverageTime.length > timeScatterLength){
                         awsAverageTime.shift()
                 };
-		console.log('awsTime: ',awsTime)
-                console.log('awsAverageTime: ', awsAverageTime)
 		chart.series[3].setData(awsAverageTime,true,false,false);
 		})();
 		},1000);
@@ -281,7 +275,7 @@ $(function () {
       type: 'histogram',
       color: 'rgba(255, 255, 255, 0)',
     },{
-      name: 'awa histogram',
+      name: 'aws histogram',
       type: 'histogram',
       color: 'red',
     },{

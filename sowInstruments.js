@@ -109,25 +109,21 @@ $(function () {
                 var y = await sowResponse.json();
                 y = JSON.stringify(y.value)
                 y = parseFloat(y);
-		var sowArray = [];
 		sowTime.push([a,y*1.94384]);
-		console.log(sowTime);
-		sowArray.push(y*1.94384);
-		if (sowArray.length > timeScatterLength){
-                        sowArray.shift()
-                };
 
 		if (sowTime.length > timeScatterLength){
 			sowTime.shift()
 		};
 		chart.series[2].setData(sowTime,true,false,false);
-	        function avgSow(sowArray) {
-		  return sowArray.reduce(function (p, c) {
-  		  return p + c;
-			}) / sowArray.length;
-		}
-			
-		sowAverageTime.push([a,avgSow(sowArray)]);
+		function avgSow(sowTime) {
+                        var total = 0;
+                        for (i = sowTime.length - 10; i < sowTime.length; i ++) {
+                                total += sowTime[i][1];
+                        }
+                        return total / 10;
+                }
+                averageSow = avgSow(sowTime)
+		sowAverageTime.push([a,averageSow]);
 		if (sowAverageTime.length > timeScatterLength){
                         sowAverageTime.shift()
                 }
@@ -275,7 +271,7 @@ $(function () {
       type: 'histogram',
       color: 'rgba(255, 255, 255, 0)',
     },{
-      name: 'awa histogram',
+      name: 'sow histogram',
       type: 'histogram',
       color: 'red',
     },{
